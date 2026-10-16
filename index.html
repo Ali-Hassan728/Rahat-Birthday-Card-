@@ -9,7 +9,7 @@
 :root{--pink:#f9d3de;--pink2:#f1a9bf;--gold:#c79a4b;--ivory:#fffaf4;--green:#2f5f4c;--ink:#3f4a40;--rose:#c0396a;--berry:#9c1f50;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *{box-sizing:border-box}
-body{margin:0;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:18px 14px;font-family:'Cormorant Garamond',Georgia,serif;color:var(--ink);background:linear-gradient(135deg,#fde4ec,#f6bccd 60%,#efa5bb);overflow-x:hidden}
+body{margin:0;height:100vh;height:100dvh;display:flex;align-items:center;justify-content:center;padding:0;font-family:'Cormorant Garamond',Georgia,serif;color:var(--ink);background:linear-gradient(135deg,#fde4ec,#f6bccd 60%,#efa5bb);overflow:hidden}
 .card{position:relative;width:100%;max-width:940px;border-radius:24px;background:linear-gradient(150deg,#fff0f4,var(--pink));border:2px solid var(--gold);box-shadow:0 0 0 6px rgba(199,154,75,.2),0 30px 60px rgba(156,31,80,.3);padding:26px 20px 30px;overflow:hidden}
 .card::before{content:"";position:absolute;inset:10px;border:1px solid rgba(199,154,75,.55);border-radius:16px;pointer-events:none}
 .book{position:relative;display:grid;perspective:2400px;perspective-origin:0% 50%}
@@ -66,9 +66,13 @@ button:disabled{opacity:.45;cursor:default}
 .spread.one .leaf{box-shadow:none}.spread.one::after{display:none}
 @media (max-width:680px){.stage .l{left:0}.stage .r{right:0}.stage{height:300px}.spread.one{grid-template-columns:1fr}.leaf{padding:32px 24px 26px}.leaf h2{font-size:36px}.leaf p{font-size:18px;line-height:1.55}.leaf .s{font-size:28px}.leaf .photo{width:130px;height:152px;font-size:14px}.cn{--r:52px}}
 @media (max-width:680px){.btns button{font-size:16px;padding:9px 13px;white-space:nowrap}.em{font-size:24px;letter-spacing:.1em}.nav{padding:0 6px}}
+#app{width:100%;max-width:940px;display:flex;flex-direction:column;align-items:center;gap:14px;padding:10px 12px;transform-origin:center center}
+.book{align-items:center}
+@media (max-width:680px){.leaf .photo{width:112px;height:131px}.leaf p{font-size:17px}.leaf h2{font-size:32px}.leaf .s{font-size:25px}}
 </style>
 </head>
 <body>
+<div id="app">
 <div class="card">
   <div class="book">
   <div class="view sheet on">
@@ -148,6 +152,7 @@ button:disabled{opacity:.45;cursor:default}
   </div>
 </div>
 
+</div>
 <script>
 if(matchMedia('(max-width:680px)').matches){
   [].slice.call(document.querySelectorAll('.spread')).forEach(function(sp){
@@ -187,6 +192,19 @@ mb.onclick=function(){
   if(au.paused){au.play().then(function(){mb.textContent='⏸ Pause Song'}).catch(function(){mb.textContent='🎵 Play Song'})}
   else{au.pause();mb.textContent='🎵 Play Song'}
 };
+function fit(){
+  if(busy)return;
+  book.style.minHeight='';
+  var keep=i,mx=0;
+  views.forEach(function(v){views.forEach(function(w){w.classList.remove('on')});v.classList.add('on');mx=Math.max(mx,book.offsetHeight)});
+  views.forEach(function(w){w.classList.remove('on')});views[keep].classList.add('on');
+  book.style.minHeight=mx+'px';
+  var app=document.getElementById('app'),k=Math.min(1,(window.innerHeight-4)/app.offsetHeight);
+  app.style.transform='scale('+k+')';
+}
+window.addEventListener('resize',fit);window.addEventListener('orientationchange',fit);window.addEventListener('load',fit);
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fit);
+fit();
 </script>
 </body>
 </html>
